@@ -1,0 +1,6 @@
+mkdir nodeproject
+cd nodeproject
+npm init
+titolo a tua discrezione il resto default
+npm install express --save
+crea app.js file nella cartella principale

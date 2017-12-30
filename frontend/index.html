@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+
+    <!-- jQuery Version 3.2.0 -->
+    <script src="/static/jquery/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Vue.js -->
+    <script src="/static/vue/vue.js"></script>
+    <script src="/node_modules/vue-socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="/node_modules/chart.js/dist/Chart.min.js"></script>
+    <script src="/node_modules/vue-chartjs/dist/vue-chartjs.min.js"></script>
+    <script>
+      $(document).ready(function(){
+
+      });
+    </script>
+  </head>
+  <body>
+    <div id="controlGui">
+      <p> CIAO </p>
+      <h1> {{ message }} </h1>
+      <button type="button" class="btn btn-default" v-on:click="openSerial">Open Serial</button>
+      <button type="button" class="btn btn-default" v-on:click="readSerial">Read Serial</button>
+      <button type="button" class="btn btn-default" v-on:click="pauseSerial">Pause Serial</button>
+      <button type="button" class="btn btn-default" v-on:click="resumeSerial">Resume Serial</button>
+      <button type="button" class="btn btn-default" v-on:click="closeSerial">Close Serial</button>
+      <line-chart :chart-data="mydata" :options="options"></line-chart>
+    </div>
+  </body>
+  <script src="/frontend/control-gui-vue.js"></script>
+
+</html>

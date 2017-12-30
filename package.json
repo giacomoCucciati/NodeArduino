@@ -1,0 +1,24 @@
+{
+  "name": "mytest",
+  "version": "1.0.0",
+  "description": "just a test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^2.7.1",
+    "chartjs": "^0.3.24",
+    "express": "^4.16.2",
+    "serialport": "^6.0.4",
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4",
+    "vue-chartjs": "^3.0.2",
+    "vue-socket.io": "^2.1.1-a"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}
