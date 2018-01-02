@@ -31,7 +31,9 @@
       <button type="button" class="btn btn-default" v-on:click="pauseSerial">Pause Serial</button>
       <button type="button" class="btn btn-default" v-on:click="resumeSerial">Resume Serial</button>
       <button type="button" class="btn btn-default" v-on:click="closeSerial">Close Serial</button>
-      <line-chart :chart-data="mydata" :options="options"></line-chart>
+      <div>
+        <line-chart :width="600" :height="300" :chart-data="mydata" :options="options"></line-chart>
+      </div>
     </div>
   </body>
   <script src="/frontend/control-gui-vue.js"></script>

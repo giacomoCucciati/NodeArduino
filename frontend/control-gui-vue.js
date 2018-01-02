@@ -2,11 +2,8 @@ Vue.component("line-chart", {
   extends: VueChartJs.Line,
   props: ['chartData', 'options'],
   mixins: [VueChartJs.mixins.reactiveProp],
-  // updated () {
-  //   console.log('I am updated')
-  // },
-  mounted () {
 
+  mounted () {
     this.renderChart(this.chartData, this.options)
   }
 });
@@ -20,30 +17,8 @@ var app = new Vue({
     socket: null,
     mydata: {},
     yvector: [],
-    options: null,
+    options: { responsive: false, maintainAspectRatios: false }
 
-    // options: {
-    //       responsive: true,
-    //       maintainAspectRatios: false,
-    //       // scales: {
-    //       //   yAxes: [{
-    //       //     ticks: {
-    //       //       callback: function(value, index, values) {
-    //       //         return `£ ${value}`;
-    //       //       },
-    //       //     },
-    //       //   }],
-    //       // },
-    //       tooltips: {
-    //         enabled: true,
-    //         // callbacks: {
-    //         //   label:function (tooltipItems, data) {
-    //         //     console.log(data)
-    //         //     return tooltipItems.yLabel + '£'
-    //         //   }
-    //         // }
-    //       }
-    //     }
   },
   methods: {
     readSerial: (event) => {
@@ -78,19 +53,18 @@ var app = new Vue({
     },
     fetchData () {
       $.getJSON('/gui/data', payload => {
-        console.log(payload['data']);
         this.fillData(payload['data']);
-        //console.log(this.series.datasets[0].data.length);
-        //this.series.datasets[0].data.push({x:this.series.datasets[0].data.length,y:payload['data']});
       });
     },
+
     fillData (yvalue) {
           this.yvector.push(yvalue);
+          while (this.yvector.length >= 20) {
+            this.yvector.shift();
+          }
           let i = 1;
           let xvector = [];
           while(xvector.push(i++)<this.yvector.length);
-          console.log(this.yvector);
-          console.log(xvector);
 
           this.mydata = {
             labels: xvector,
@@ -104,14 +78,10 @@ var app = new Vue({
           }
         },
 
-        getRandomInt () {
-          return Math.floor(Math.random() * (50 - 5 + 1)) + 5
-        }
   },
 
   computed: {
     isDefined () {
-      console.log(this.series);
       if(this.series !== undefined) {
         return true;
       } else {
