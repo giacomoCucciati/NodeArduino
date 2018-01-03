@@ -1,10 +1,11 @@
 const SerialPort = require('serialport');
-const Readline = SerialPort.parsers.Readline;
 const EventEmitter = require('events');
 const express = require('express');
+const Board = require("firmata");
 
 module.exports = function() {
 
+  var board = undefined;
   var port = undefined;
   var parser = undefined;
   var eventEmitter = new EventEmitter();
@@ -17,30 +18,34 @@ module.exports = function() {
         if (err) {
           return console.log(err.message);
         } else {
-          parser = port.pipe(new Readline());
-          return console.log('Success!');
+          console.log("Connecting to arduino...");
+          board = new Board(port);
+          board.on("ready", () => {
+            console.log("Setting sampling interval to 5s...");
+            board.setSamplingInterval(5000);
+            return console.log('Success, ready to communicate with Arduino!');
+          });
         }
       }
     );
   };
 
   var closeserial = function() {
-    port.close();
+
   };
 
   var activatereading = function() {
-    // Switches the port into "flowing mode"
-    parser.on('data', function (data) {
-      eventEmitter.emit("new-serial-data", data.toString('utf8'));
+    board.analogRead(0, function(value) {
+        eventEmitter.emit("new-serial-data", value);
     });
   };
 
   var pausereading = function() {
-    port.pause();
+
   };
 
   var resumereading = function() {
-    port.resume();
+
   };
 
   return {

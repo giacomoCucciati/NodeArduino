@@ -13,42 +13,37 @@ var app = new Vue({
 
   el: '#controlGui',
   data: {
-    message: 'Hello Vue!',
+    message: 'Pippo!',
     socket: null,
     mydata: {},
     yvector: [],
     options: { responsive: false, maintainAspectRatios: false }
-
   },
+
   methods: {
     readSerial: (event) => {
-      console.log("Request serial");
       $.getJSON('/gui/read-serial', payload => {
-        console.log(payload['message']);
+        app.message = payload['message'];
       });
     },
     openSerial: (event) => {
-      console.log("Open serial");
       $.getJSON('/gui/open-serial', payload => {
-        console.log(payload['message']);
+        app.message = payload['message'];
       });
     },
     pauseSerial: (event) => {
-      console.log("Pause serial");
       $.getJSON('/gui/pause-serial', payload => {
-        console.log(payload['message']);
+        app.message = payload['message'];
       });
     },
     closeSerial: (event) => {
-      console.log("Close serial");
       $.getJSON('/gui/close-serial', payload => {
-        console.log(payload['message']);
+        app.message = payload['message'];
       });
     },
     resumeSerial: (event) => {
-      console.log("Resume serial");
       $.getJSON('/gui/resume-serial', payload => {
-        console.log(payload['message']);
+        app.message = payload['message']
       });
     },
     fetchData () {

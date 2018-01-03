@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 var app = express();
-var guiRouter = require('./gui-router')();
+
 
 
 
@@ -21,14 +21,15 @@ var guiRouter = require('./gui-router')();
 // )
 //
 //app.use('/theBigRouter', theBigRouter)
+
+
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var guiRouter = require('./gui-router')(io);
 app.use('/gui', guiRouter.router);
 app.use('/static', express.static(path.join(__dirname, 'static')))
 app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')))
 app.use('/frontend', express.static(path.join(__dirname, 'frontend')))
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-guiRouter.configure(io);
-
 
 server.listen(3000);
 //app.listen(3000, () => console.log('Example app listening on port 3000!'))
