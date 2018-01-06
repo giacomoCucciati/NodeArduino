@@ -31,10 +31,15 @@ module.exports = function(theSocket) {
     return {data: values[values.length-1]};
   };
 
+  var changecolor = function(r,g,b) {
+    arduino.changecolor(r, g, b);
+  };
+
   return {
     arduino,
     configure,
     getData,
+    changecolor,
     startReading
   };
 

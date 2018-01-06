@@ -8,12 +8,26 @@ Vue.component("line-chart", {
   }
 });
 
+Vue.component("chrome-picker", {
+  extends: VueColor.Chrome,
+});
+
+var defaultProps = {
+  rgba: {
+    r: 25,
+    g: 77,
+    b: 51,
+    a: 1
+  },
+  a: 1
+};
 
 var app = new Vue({
 
   el: '#controlGui',
   data: {
     message: 'Pippo!',
+    colors: defaultProps,
     socket: null,
     mydata: {},
     yvector: [],
@@ -49,6 +63,12 @@ var app = new Vue({
     fetchData () {
       $.getJSON('/gui/data', payload => {
         this.fillData(payload['data']);
+      });
+    },
+    updateValue (value) {
+      app.colors = value;
+      $.post('/gui/changecolor',{  r: app.colors.rgba.r, g: app.colors.rgba.g, b: app.colors.rgba.b,}, payload => {
+        app.message = payload['message']
       });
     },
 

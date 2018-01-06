@@ -58,6 +58,13 @@ module.exports = function(theSocket) {
     res.send(maincontrol.getData());
   });
 
+  // Change color
+  router.post('/changecolor', (req, res) => {
+    console.log('Requested new color: ',req.body.r, req.body.g, req.body.b);
+    maincontrol.changecolor(req.body.r, req.body.g, req.body.b);
+    res.send("Setting new color");
+  });
+
   return {
     router,
   };

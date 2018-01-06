@@ -23,6 +23,9 @@ module.exports = function() {
           board.on("ready", () => {
             console.log("Setting sampling interval to 5s...");
             board.setSamplingInterval(5000);
+            board.pinMode(9,board.MODES.PWM);
+            board.pinMode(10,board.MODES.PWM);
+            board.pinMode(11,board.MODES.PWM);
             return console.log('Success, ready to communicate with Arduino!');
           });
         }
@@ -48,9 +51,17 @@ module.exports = function() {
 
   };
 
+  var changecolor = function(r, g, b) {
+    board.analogWrite(11,r);
+    board.analogWrite(10,b);
+    board.analogWrite(9,g);
+    console.log("Value changed to: ",r, g, b);
+  };
+
   return {
     port,
     eventEmitter,
+    changecolor: changecolor,
     pausereading: pausereading,
     resumereading: resumereading,
     connectserial: connectserial,

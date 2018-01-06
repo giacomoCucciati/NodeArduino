@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
 
 
 
@@ -22,6 +23,14 @@ var app = express();
 //
 //app.use('/theBigRouter', theBigRouter)
 
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+/**bodyParser.json(options)
+ * Parses the text as JSON and exposes the resulting object on req.body.
+ */
+app.use(bodyParser.json());
 
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
