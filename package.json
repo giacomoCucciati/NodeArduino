@@ -11,7 +11,6 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "chart.js": "^2.7.1",
-    "chartjs": "^0.3.24",
     "express": "^4.16.2",
     "firmata": "^0.18.0",
     "serialport": "^6.0.4",
@@ -19,7 +18,7 @@
     "socket.io-client": "^2.0.4",
     "vue-chartjs": "^3.0.2",
     "vue-color": "^2.4.3",
-    "vue-socket.io": "^2.1.1-a"
+    "vue-socket.io": "^2.1.1"
   },
   "devDependencies": {
     "gulp": "^3.9.1"
