@@ -1,9 +1,18 @@
 const path = require('path');
 const express = require('express');
+var fs = require('fs');
 var app = express();
 var bodyParser = require('body-parser');
+var https = require('https');
 
-
+var options = {
+    key: fs.readFileSync('server-key.pem'),
+    cert: fs.readFileSync('server-crt.pem'),
+    ca: fs.readFileSync('ca-crt.pem'),
+    passphrase: 'lachiaveprivatadelserver',
+    requestCert: true,
+    rejectUnauthorized: true
+};
 
 
 //var theBigRouter = require('./theBigRouter')
@@ -27,18 +36,19 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+
 /**bodyParser.json(options)
  * Parses the text as JSON and exposes the resulting object on req.body.
  */
 app.use(bodyParser.json());
 
-var server = require('http').createServer(app);
+var server = https.createServer(options,app);
 var io = require('socket.io')(server);
 var guiRouter = require('./gui-router')(io);
 app.use('/gui', guiRouter.router);
-app.use('/static', express.static(path.join(__dirname, 'static')))
-app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')))
-app.use('/frontend', express.static(path.join(__dirname, 'frontend')))
+app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
+app.use('/frontend', express.static(path.join(__dirname, 'frontend')));
 
 server.listen(3000);
 //app.listen(3000, () => console.log('Example app listening on port 3000!'))
