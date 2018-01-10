@@ -5,16 +5,12 @@ var app = express();
 var bodyParser = require('body-parser');
 var https = require('https');
 
-var options = {
-    key: fs.readFileSync('server-key.pem'),
-    cert: fs.readFileSync('server-crt.pem'),
-    ca: fs.readFileSync('ca-crt.pem'),
-    passphrase: 'lachiaveprivatadelserver',
-    requestCert: true,
-    rejectUnauthorized: true
-};
-
-
+const opts = { key: fs.readFileSync('server_key.pem'),
+               cert: fs.readFileSync('server_cert.pem'),
+               requestCert: true,
+               rejectUnauthorized: false,
+               ca: [ fs.readFileSync('server_cert.pem') ]
+             }
 //var theBigRouter = require('./theBigRouter')
 // const { fork } = require('child_process');
 //
@@ -42,9 +38,24 @@ app.use(bodyParser.urlencoded({
  */
 app.use(bodyParser.json());
 
-var server = https.createServer(options,app);
+var server = https.createServer(opts,app);
 var io = require('socket.io')(server);
 var guiRouter = require('./gui-router')(io);
+
+app.get('/', (req, res) => {
+	res.send('<a href="authenticate">Log in using client certificate</a>')
+});
+app.get('/authenticate', (req, res) => {
+	const cert = req.connection.getPeerCertificate();
+  if (req.client.authorized) {
+		res.send(`Hello ${cert.subject.CN}, your certificate was issued by ${cert.issuer.CN}!`);
+  } else if (cert.subject) {
+		res.status(403).send(`Sorry ${cert.subject.CN}, certificates from ${cert.issuer.CN} are not welcome here.`);
+  } else {
+		res.status(401).send(`Sorry, but you need to provide a client certificate to continue.`);
+	}
+});
+
 app.use('/gui', guiRouter.router);
 app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
