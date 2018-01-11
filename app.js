@@ -5,11 +5,11 @@ var app = express();
 var bodyParser = require('body-parser');
 var https = require('https');
 
-const opts = { key: fs.readFileSync('server_key.pem'),
-               cert: fs.readFileSync('server_cert.pem'),
+const opts = { key: fs.readFileSync('myOwnServer-key.pem'),
+               cert: fs.readFileSync('myOwnServer-crt.pem'),
                requestCert: true,
-               rejectUnauthorized: false,
-               ca: [ fs.readFileSync('server_cert.pem') ]
+               rejectUnauthorized: true,
+               ca: [ fs.readFileSync('myOwnServer-crt.pem') ]
              }
 //var theBigRouter = require('./theBigRouter')
 // const { fork } = require('child_process');
