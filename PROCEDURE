@@ -1,11 +1,4 @@
-mkdir nodeproject
-cd nodeproject
-npm init
-titolo a tua discrezione il resto default
-npm install express --save
-crea app.js file nella cartella principale
-
-
 create client certificate
-openssl req -newkey rsa:4096 -keyout alice_key.pem -out alice_csr.pem -nodes -days 365 -subj "/CN=Alice"
-openssl x509 -req -in alice_csr.pem -CA server_cert.pem -CAkey server_key.pem -out alice_cert.pem -set_serial 01 -days 365
+openssl req -newkey rsa:4096 -keyout theClient-key.pem -out theClient-csr.pem -nodes -days 365
+openssl x509 -req -in theClient-csr.pem -CA myOwnServer-crt.pem -CAkey myOwnServer-key.pem -out theClient-crt.pem -set_serial 01 -days 365
+openssl pkcs12 -export -clcerts -in theClient-crt.pem -inkey theClient-key.pem -out theGoodClient.p12
