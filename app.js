@@ -9,7 +9,7 @@ const opts = { key: fs.readFileSync('myOwnServer-key.pem'),
                cert: fs.readFileSync('myOwnServer-crt.pem'),
                requestCert: true,
                rejectUnauthorized: true,
-               ca: [ fs.readFileSync('myOwnServer-crt.pem') ]
+               ca: [ fs.readFileSync('myOwnCA-crt.pem') ]
              }
 //var theBigRouter = require('./theBigRouter')
 // const { fork } = require('child_process');
