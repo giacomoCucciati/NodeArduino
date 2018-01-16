@@ -6,9 +6,9 @@ module.exports = function(theSocket) {
   var values = [];
   var mysocket = theSocket.of("/control");;
 
-  var configure = function() {
+  var configure = function(port) {
     arduino = require('./arduino/board')();
-    arduino.connectserial("/dev/tty.usbmodem1411",57600);
+    arduino.connectserial("port",57600);
     arduino.eventEmitter.on("new-serial-data", elaborateData);
     //mysocket = socket.of("/control");
   };

@@ -32,6 +32,12 @@ var app = new Vue({
     mydata: {},
     yvector: [],
     options: { responsive: false, maintainAspectRatios: false }
+    portselected: '/dev/ttyACM0',
+    ports: [
+      { text: '/dev/ttyACM0'},
+      { text: 'Two'},
+      { text: 'Three'}
+    ]
   },
 
   methods: {
@@ -41,8 +47,8 @@ var app = new Vue({
       });
     },
     openSerial: (event) => {
-      $.getJSON('/gui/open-serial', payload => {
-        app.message = payload['message'];
+      $.post('/gui/open-serial', { port: app.portselected }, payload => {
+        app.message = payload['message']
       });
     },
     pauseSerial: (event) => {

@@ -18,9 +18,9 @@ module.exports = function(theSocket) {
   });
 
   // Read serial port
-  router.get('/open-serial', (req, res) => {
-    console.log('Requested opening Serial Port');
-    maincontrol.configure();
+  router.post('/open-serial', (req, res) => {
+    console.log('Requested opening Serial Port on: ', req.body.port);
+    maincontrol.configure(req.body.port);
     res.send({message: "Opening the serial port."});
   });
 

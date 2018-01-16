@@ -26,11 +26,20 @@
   <body>
     <div id="controlGui">
       <h1> {{ message }} </h1>
-      <button type="button" class="btn btn-default" v-on:click="openSerial">Open Serial</button>
-      <button type="button" class="btn btn-default" v-on:click="readSerial">Read Serial</button>
-      <button type="button" class="btn btn-default" v-on:click="pauseSerial">Pause Serial</button>
-      <button type="button" class="btn btn-default" v-on:click="resumeSerial">Resume Serial</button>
-      <button type="button" class="btn btn-default" v-on:click="closeSerial">Close Serial</button>
+      <div>
+        <button type="button" class="btn btn-default" v-on:click="openSerial">Open Serial</button>
+        <button type="button" class="btn btn-default" v-on:click="readSerial">Read Serial</button>
+        <button type="button" class="btn btn-default" v-on:click="pauseSerial">Pause Serial</button>
+        <button type="button" class="btn btn-default" v-on:click="resumeSerial">Resume Serial</button>
+        <button type="button" class="btn btn-default" v-on:click="closeSerial">Close Serial</button>
+      </div>
+      <div>
+        <select v-model="portselected">
+            <option v-for="port in ports" v-bind:value="port.text">
+                {{ port.text }}
+            </option>
+        </select>
+      </div>
       <div>
         <line-chart :width="600" :height="300" :chart-data="mydata" :options="options"></line-chart>
       </div>
