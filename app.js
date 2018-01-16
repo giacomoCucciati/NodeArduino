@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+var helmet = require('helmet');
 var fs = require('fs');
 var app = express();
 var bodyParser = require('body-parser');
@@ -27,6 +28,13 @@ const opts = { key: fs.readFileSync('myOwnServer-key.pem'),
 // )
 //
 //app.use('/theBigRouter', theBigRouter)
+
+// Implement X-Frame: Deny
+app.use(helmet.xframe('deny'));
+// Hide X-Powered-By
+app.use(helmet.hidePoweredBy());
+// Implement X-XSS-Protection
+app.use(helmet.xssFilter());
 
 app.use(bodyParser.urlencoded({
     extended: true
