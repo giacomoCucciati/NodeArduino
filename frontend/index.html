@@ -14,6 +14,7 @@
     <!-- Vue.js -->
     <script src="/static/vue/vue.js"></script>
     <script src="/node_modules/vue-socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="/node_modules/chart.js/node_modules/moment/moment.js"></script>
     <script src="/node_modules/chart.js/dist/Chart.min.js"></script>
     <script src="/node_modules/vue-chartjs/dist/vue-chartjs.min.js"></script>
     <script src="/node_modules/vue-color/dist/vue-color.min.js"></script>
@@ -27,11 +28,10 @@
     <div id="controlGui">
       <h1> {{ message }} </h1>
       <div>
-        <button type="button" class="btn btn-default" v-on:click="openSerial">Open Serial</button>
-        <button type="button" class="btn btn-default" v-on:click="readSerial">Read Serial</button>
-        <button type="button" class="btn btn-default" v-on:click="pauseSerial">Pause Serial</button>
-        <button type="button" class="btn btn-default" v-on:click="resumeSerial">Resume Serial</button>
-        <button type="button" class="btn btn-default" v-on:click="closeSerial">Close Serial</button>
+        <button type="button" class="btn btn-default" v-on:click="connectArduino">Connect Arduino</button>
+        <button type="button" class="btn btn-default" v-on:click="readSingleTemp">Read Temperature</button>
+        <button type="button" class="btn btn-default" v-on:click="startTempReading">Start Cycle Temp</button>
+        <button type="button" class="btn btn-default" v-on:click="stopTempReading">Stop Cycle Temp</button>
       </div>
       <div>
         <select v-model="portselected">
@@ -41,7 +41,7 @@
         </select>
       </div>
       <div>
-        <line-chart :width="600" :height="300" :chart-data="mydata" :options="options"></line-chart>
+        <line-chart :width="600" :height="500" :chart-data="mydata" :options="options"></line-chart>
       </div>
       <chrome-picker :value="colors" @input="updateValue"></chrome-picker>
     </div>

@@ -28,6 +28,11 @@ module.exports = function() {
             board.pinMode(11,board.MODES.PWM);
             return console.log('Success, ready to communicate with Arduino!');
           });
+
+          // Catch the string sysex from the arduino
+          board.on("string", function(theString) {
+            elaborateString(theString)
+          });
         }
       }
     );
@@ -38,10 +43,19 @@ module.exports = function() {
   };
 
   var activatereading = function() {
-    board.analogRead(0, function(value) {
-        eventEmitter.emit("new-serial-data", value);
-    });
+    // board.analogRead(0, function(value) {
+    //     eventEmitter.emit("new-serial-data", value);
+    // });
+    console.log(Board.encode([0x12,0]))
+    board.sysexCommand(Board.encode([0x12,0]));
   };
+
+  var elaborateString = function(theString) {
+    let value = theString.substring(12);
+    console.log(value);
+    eventEmitter.emit("new-serial-data", value);
+
+  }
 
   var pausereading = function() {
 

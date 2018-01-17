@@ -30,45 +30,42 @@ var app = new Vue({
     colors: defaultProps,
     socket: null,
     mydata: {},
-    yvector: [],
-    options: { responsive: false, maintainAspectRatios: false }
+    xyvector: [],
+    options: { responsive: false, maintainAspectRatios: false },
     portselected: '/dev/ttyACM0',
     ports: [
       { text: '/dev/ttyACM0'},
-      { text: 'Two'},
-      { text: 'Three'}
-    ]
+      { text: '/dev/tty.usbmodem1411'},
+    ],
   },
 
   methods: {
-    readSerial: (event) => {
-      $.getJSON('/gui/read-serial', payload => {
-        app.message = payload['message'];
-      });
-    },
-    openSerial: (event) => {
-      $.post('/gui/open-serial', { port: app.portselected }, payload => {
+
+    connectArduino: (event) => {
+      $.post('/gui/connect-arduino', { port: app.portselected }, payload => {
         app.message = payload['message']
       });
     },
-    pauseSerial: (event) => {
-      $.getJSON('/gui/pause-serial', payload => {
+
+    readSingleTemp: (event) => {
+      $.getJSON('/gui/read-single-temp', payload => {
         app.message = payload['message'];
       });
     },
-    closeSerial: (event) => {
-      $.getJSON('/gui/close-serial', payload => {
-        app.message = payload['message'];
-      });
-    },
-    resumeSerial: (event) => {
-      $.getJSON('/gui/resume-serial', payload => {
+
+    startTempReading: (event) => {
+      $.getJSON('/gui/start-cycle-temp', payload => {
         app.message = payload['message']
       });
     },
-    fetchData () {
-      $.getJSON('/gui/data', payload => {
-        this.fillData(payload['data']);
+    stopTempReading: (event) => {
+      $.getJSON('/gui/stop-cycle-temp', payload => {
+        app.message = payload['message'];
+      });
+    },
+    fetchData (type) {
+      $.post('/gui/data',{ load: type }, payload => {
+        this.fillData(type, payload['data']);
       });
     },
     updateValue (value) {
@@ -78,26 +75,63 @@ var app = new Vue({
       });
     },
 
-    fillData (yvalue) {
-          this.yvector.push(yvalue);
-          while (this.yvector.length >= 20) {
-            this.yvector.shift();
+    fillData (type, theValue) {
+          // this.xyvector.push(yvalue);
+          // while (this.yvector.length >= 20) {
+          //   this.yvector.shift();
+          // }
+          // let i = 1;
+          // let xvector = [];
+          // while(xvector.push(i++)<this.yvector.length);
+          if(type === "last") {
+            this.xyvector.push({x: new Date(theValue.x), y: theValue.y});
+          } else if (type === "all") {
+            for (let el in theValue) {
+              let singleValue = theValue[el];
+              this.xyvector.push({x: new Date(singleValue.x), y: singleValue.y});
+            }
           }
-          let i = 1;
-          let xvector = [];
-          while(xvector.push(i++)<this.yvector.length);
-
           this.mydata = {
-            labels: xvector,
+            labels: [],
             datasets: [
               {
-                label: 'Data One',
-                backgroundColor: '#f87979',
-                data: this.yvector
+                label: 'Temp (C)',
+                backgroundColor: 'transparent',
+                pointBorderColor: 'orange',
+                data: this.xyvector
               }
             ]
           }
-        },
+
+          this.options = {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 5
+          },
+          title: {
+            display: true,
+            text: 'Temperatura'
+          },
+          scales: {
+            xAxes: [{
+              type: 'time',
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'Data'
+              },
+            }],
+            yAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'Gradi'
+              },
+            }]
+          }
+        };
+      },
 
   },
 
@@ -115,7 +149,9 @@ var app = new Vue({
     // Creating the socket for updates notifications
     this.socket = io('/control');
     // Callback for new-data event
-    this.socket.on('new-data', () => this.fetchData());
+    this.socket.on('new-data', () => this.fetchData("last"));
+    // Ask for the latest data collected
+    this.fetchData("all");
   },
 
   // This function is called before a change of component by the router.

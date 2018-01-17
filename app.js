@@ -30,7 +30,7 @@ const opts = { key: fs.readFileSync('myOwnServer-key.pem'),
 //app.use('/theBigRouter', theBigRouter)
 
 // Implement X-Frame: Deny
-app.use(helmet.xframe('deny'));
+app.use(helmet.frameguard('deny'));
 // Hide X-Powered-By
 app.use(helmet.hidePoweredBy());
 // Implement X-XSS-Protection

@@ -18,44 +18,36 @@ module.exports = function(theSocket) {
   });
 
   // Read serial port
-  router.post('/open-serial', (req, res) => {
+  router.post('/connect-arduino', (req, res) => {
     console.log('Requested opening Serial Port on: ', req.body.port);
     maincontrol.configure(req.body.port);
     res.send({message: "Opening the serial port."});
   });
 
   // Read serial port
-  router.get('/read-serial', (req, res) => {
-    //console.log('Requested reading Serial Port');
-    maincontrol.startReading();
-    res.send({message: 'Reading Serial Port.'});
+  router.get('/read-single-temp', (req, res) => {
+    maincontrol.readSingleTemp();
+    res.send({message: 'Reading temperature.'});
   });
 
   // Read serial port
-  router.get('/pause-serial', (req, res) => {
-    console.log('Requested pausing Serial Port');
-    //maincontrol.arduino.pausereading();
-    res.send({message: "Pausing"});
+  router.get('/start-cycle-temp', (req, res) => {
+    console.log('Requested start reading temperature.');
+    maincontrol.startTempCycle();
+    res.send({message: "Start reading temperature."});
   });
 
   // Read serial port
-  router.get('/resume-serial', (req, res) => {
-    console.log('Requested resuming Serial Port');
-    //maincontrol.arduino.resumereading();
-    res.send({message: "Resuming Serial Port."});
-  });
-
-  // Close serial port
-  router.get('/close-serial', (req, res) => {
-    console.log('Requested closing Serial Port');
-    //maincontrol.arduino.closeserial();
-    res.send({message: "Closing the serial port."});
+  router.get('/stop-cycle-temp', (req, res) => {
+    console.log('Requested stop reading temperature.');
+    maincontrol.stopTempCycle();
+    res.send({message: "Stop reading temperature."});
   });
 
   // Get data
-  router.get('/data', (req, res) => {
-    console.log('Requested new data');
-    res.send(maincontrol.getData());
+  router.post('/data', (req, res) => {
+    console.log('Requested new data type: ', req.body.load);
+    res.send(maincontrol.getData(req.body.load));
   });
 
   // Change color
