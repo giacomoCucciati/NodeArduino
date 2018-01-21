@@ -32,17 +32,22 @@ var app = new Vue({
     mydata: {},
     xyvector: [],
     options: { responsive: false, maintainAspectRatios: false },
-    portselected: '/dev/ttyACM0',
-    ports: [
-      { text: '/dev/ttyACM0'},
-      { text: '/dev/tty.usbmodem1411'},
-    ],
+    portselected: '',
+    ports: [],
+    arduino: false,
   },
 
   methods: {
 
     connectArduino: (event) => {
       $.post('/gui/connect-arduino', { port: app.portselected }, payload => {
+        app.message = payload['message']
+        app.arduino = payload['arduino']
+      });
+    },
+
+    closeArduino: (event) => {
+      $.post('/gui/close-arduino', payload => {
         app.message = payload['message']
       });
     },
@@ -65,7 +70,7 @@ var app = new Vue({
     },
     fetchData (type) {
       $.post('/gui/data',{ load: type }, payload => {
-        this.fillData(type, payload['data']);
+        this.fillData(type, payload);
       });
     },
     updateValue (value) {
@@ -75,21 +80,18 @@ var app = new Vue({
       });
     },
 
-    fillData (type, theValue) {
-          // this.xyvector.push(yvalue);
-          // while (this.yvector.length >= 20) {
-          //   this.yvector.shift();
-          // }
-          // let i = 1;
-          // let xvector = [];
-          // while(xvector.push(i++)<this.yvector.length);
+    fillData (type, payload) {
+          let theValue = payload['data'];
           if(type === "last") {
             this.xyvector.push({x: new Date(theValue.x), y: theValue.y});
           } else if (type === "all") {
+            app.ports = payload['ports'];
+            app.arduino = payload['arduino'];
             for (let el in theValue) {
               let singleValue = theValue[el];
               this.xyvector.push({x: new Date(singleValue.x), y: singleValue.y});
             }
+
           }
           this.mydata = {
             labels: [],
@@ -142,6 +144,10 @@ var app = new Vue({
       } else {
         return false;
       }
+    },
+
+    connected() {
+      return this.arduino;
     }
   },
 

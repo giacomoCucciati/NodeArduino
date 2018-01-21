@@ -7,8 +7,10 @@ module.exports = function() {
 
   var board = undefined;
   var port = undefined;
-  var parser = undefined;
   var eventEmitter = new EventEmitter();
+  var led_R = 11;
+  var led_G = 10;
+  var led_B = 9;
 
   var connectserial = function(newPortString,newBaudRate) {
     port = new SerialPort(
@@ -21,11 +23,9 @@ module.exports = function() {
           console.log("Connecting to arduino...");
           board = new Board(port);
           board.on("ready", () => {
-            console.log("Setting sampling interval to 5s...");
-            board.setSamplingInterval(5000);
-            board.pinMode(9,board.MODES.PWM);
-            board.pinMode(10,board.MODES.PWM);
-            board.pinMode(11,board.MODES.PWM);
+            board.pinMode(led_R,board.MODES.PWM);
+            board.pinMode(led_G,board.MODES.PWM);
+            board.pinMode(led_B,board.MODES.PWM);
             return console.log('Success, ready to communicate with Arduino!');
           });
 
@@ -39,45 +39,32 @@ module.exports = function() {
   };
 
   var closeserial = function() {
-
+    if(board !== undefined) {
+      board.close();
+      board = undefined;
+    }
   };
 
   var activatereading = function() {
-    // board.analogRead(0, function(value) {
-    //     eventEmitter.emit("new-serial-data", value);
-    // });
-    console.log(Board.encode([0x12,0]))
     board.sysexCommand(Board.encode([0x12,0]));
   };
 
   var elaborateString = function(theString) {
     let value = theString.substring(12);
-    console.log(value);
     eventEmitter.emit("new-serial-data", value);
 
   }
 
-  var pausereading = function() {
-
-  };
-
-  var resumereading = function() {
-
-  };
-
   var changecolor = function(r, g, b) {
-    board.analogWrite(11,r);
-    board.analogWrite(10,b);
-    board.analogWrite(9,g);
-    console.log("Value changed to: ",r, g, b);
+    board.analogWrite(led_R,r);
+    board.analogWrite(led_G,b);
+    board.analogWrite(led_B,g);
   };
 
   return {
     port,
     eventEmitter,
     changecolor: changecolor,
-    pausereading: pausereading,
-    resumereading: resumereading,
     connectserial: connectserial,
     closeserial: closeserial,
     activatereading: activatereading

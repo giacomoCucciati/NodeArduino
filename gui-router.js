@@ -20,8 +20,14 @@ module.exports = function(theSocket) {
   // Read serial port
   router.post('/connect-arduino', (req, res) => {
     console.log('Requested opening Serial Port on: ', req.body.port);
-    maincontrol.configure(req.body.port);
-    res.send({message: "Opening the serial port."});
+    res.send(maincontrol.configure(req.body.port));
+  });
+
+  // Close connection with Arduino
+  router.post('/close-arduino', (req, res) => {
+    console.log('Requested closing connection with Arduino.');
+    maincontrol.close();
+    res.send({message: "Closing connection with Arduino."});
   });
 
   // Read serial port

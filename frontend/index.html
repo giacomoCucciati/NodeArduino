@@ -28,15 +28,18 @@
     <div id="controlGui">
       <h1> {{ message }} </h1>
       <div>
-        <button type="button" class="btn btn-default" v-on:click="connectArduino">Connect Arduino</button>
+        <button type="button" class="btn btn-default" v-on:click="connectArduino" :disabled="connected">Connect Arduino</button>
+        <button type="button" class="btn btn-default" v-on:click="closeArduino" :disabled="!connected">Close Arduino</button>
+      </div>
+      <div>
         <button type="button" class="btn btn-default" v-on:click="readSingleTemp">Read Temperature</button>
         <button type="button" class="btn btn-default" v-on:click="startTempReading">Start Cycle Temp</button>
         <button type="button" class="btn btn-default" v-on:click="stopTempReading">Stop Cycle Temp</button>
       </div>
       <div>
         <select v-model="portselected">
-            <option v-for="port in ports" v-bind:value="port.text">
-                {{ port.text }}
+            <option v-for="port in ports" v-bind:value="port">
+                {{ port }}
             </option>
         </select>
       </div>

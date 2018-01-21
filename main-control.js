@@ -6,12 +6,19 @@ module.exports = function(theSocket) {
   var values = [];
   var mysocket = theSocket.of("/control");
   var mytimer = undefined;
+  var configs = require('./configs')()
 
   var configure = function(port) {
     arduino = require('./arduino/board')();
     arduino.connectserial(port,57600);
     arduino.eventEmitter.on("new-serial-data", elaborateData);
-    //mysocket = socket.of("/control");
+    let connected= false;
+    if( arduino !== undefined ) connected = true;
+    return { message: "Opening the serial port.", arduino: connected}
+  };
+
+  var close = function() {
+    arduino.closeserial();
   };
 
   var elaborateData = function(theSerialData) {
@@ -32,7 +39,7 @@ module.exports = function(theSocket) {
     console.log("Activating cycle reading...");
     this.mytimer = setInterval( function(){
       arduino.activatereading();
-    }, 10000);
+    }, configs.intervalReading*1000);
   };
 
   var stopTempCycle = function() {
@@ -41,9 +48,16 @@ module.exports = function(theSocket) {
   };
 
   var getData = function(type) {
-    console.log("getData called with type: ",type);
+
     if ( type === "all" ){
-      return {data: values};
+      let connected = false;
+      if( arduino !== undefined ) connected = true;
+
+      return {
+        data: values,
+        ports: configs.ports,
+        arduino: connected
+      };
     } else if ( type === "last" ){
       return {data: values[values.length-1]};
     }
@@ -57,6 +71,7 @@ module.exports = function(theSocket) {
   return {
     arduino,
     configure,
+    close,
     getData,
     changecolor,
     readSingleTemp,
