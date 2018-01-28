@@ -13,34 +13,41 @@ module.exports = function() {
   var led_B = 9;
 
   var connectserial = function(newPortString,newBaudRate) {
-    port = new SerialPort(
-      newPortString,
-      {baudRate: newBaudRate},
-      function (err) {
-        if (err) {
-          return console.log(err.message);
-        } else {
-          console.log("Connecting to arduino...");
-          board = new Board(port);
-          board.on("ready", () => {
-            board.pinMode(led_R,board.MODES.PWM);
-            board.pinMode(led_G,board.MODES.PWM);
-            board.pinMode(led_B,board.MODES.PWM);
-            return console.log('Success, ready to communicate with Arduino!');
-          });
 
-          // Catch the string sysex from the arduino
-          board.on("string", function(theString) {
-            elaborateString(theString)
-          });
-        }
-      }
-    );
+    return new Promise(function (fulfill, reject){
+      console.log("connectserial:",newPortString,newBaudRate);
+
+      port = new SerialPort(
+        newPortString,
+        {baudRate: newBaudRate}, function (err) {
+          if (err) {
+            console.log("Port creation: failed");
+            reject(Error(err));
+          } else {
+            console.log("Port creation: done");
+            console.log("Connecting to arduino...");
+            board = new Board(port);
+            board.on("ready", () => {
+              console.log('Settings Arduino pins...');
+              board.pinMode(led_R,board.MODES.PWM);
+              board.pinMode(led_G,board.MODES.PWM);
+              board.pinMode(led_B,board.MODES.PWM);
+              board.on("string", function(theString) {
+                elaborateString(theString);
+              });
+              fulfill('Board available');
+            });
+          }
+      });
+    });
   };
 
   var closeserial = function() {
+
     if(board !== undefined) {
-      board.close();
+      console.log("Closing everything!");
+      board.serialClose(port);
+      port = undefined;
       board = undefined;
     }
   };
@@ -64,6 +71,7 @@ module.exports = function() {
   return {
     port,
     eventEmitter,
+    board,
     changecolor: changecolor,
     connectserial: connectserial,
     closeserial: closeserial,

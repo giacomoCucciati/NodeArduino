@@ -49,6 +49,7 @@ var app = new Vue({
     closeArduino: (event) => {
       $.post('/gui/close-arduino', payload => {
         app.message = payload['message']
+        app.arduino = payload['arduino']
       });
     },
 
@@ -87,6 +88,9 @@ var app = new Vue({
           } else if (type === "all") {
             app.ports = payload['ports'];
             app.arduino = payload['arduino'];
+            if(app.ports.indexOf(payload['thePort']) > 0) {
+              app.portselected = payload['thePort'];
+            }
             for (let el in theValue) {
               let singleValue = theValue[el];
               this.xyvector.push({x: new Date(singleValue.x), y: singleValue.y});

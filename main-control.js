@@ -2,22 +2,30 @@ const express = require('express')
 
 module.exports = function(theSocket) {
 
-  var arduino = undefined;
+  var arduino = require('./arduino/board')();
   var values = [];
   var mysocket = theSocket.of("/control");
   var mytimer = undefined;
-  var configs = require('./configs')()
+  var configs = require('./configs')();
+  var chosenPort = undefined;
 
   var configure = function(port) {
-    arduino = require('./arduino/board')();
-    arduino.connectserial(port,57600);
-    arduino.eventEmitter.on("new-serial-data", elaborateData);
-    let connected= false;
-    if( arduino !== undefined ) connected = true;
-    return { message: "Opening the serial port.", arduino: connected}
+    console.log("maincontrol");
+
+    return arduino.connectserial(port,57600).then(function() {
+      console.log("main control promise");
+
+      return new Promise(function(fulfill,reject) {
+        chosenPort = port;
+        arduino.eventEmitter.on("new-serial-data", elaborateData);
+        fulfill('OK');
+      });
+    });
+
   };
 
   var close = function() {
+    arduino.eventEmitter.removeListener("new-serial-data", elaborateData)
     arduino.closeserial();
   };
 
@@ -25,6 +33,7 @@ module.exports = function(theSocket) {
     //let singleValue = theSerialData.substring(7,theSerialData.length - 1);
     var d = new Date();
     values.push({x: d.getTime(), y: parseFloat(theSerialData)});
+    if(values.length > configs.temp_length) values = values.slice(-configs.temp_length);
     console.log("ElaborateData, last value: ", theSerialData);
     mysocket.emit("new-data");
   };
@@ -32,7 +41,6 @@ module.exports = function(theSocket) {
   var readSingleTemp = function() {
     console.log("Activating reading...");
     arduino.activatereading();
-    //return {data: values[values.length-1]};
   };
 
   var startTempCycle = function() {
@@ -51,11 +59,12 @@ module.exports = function(theSocket) {
 
     if ( type === "all" ){
       let connected = false;
-      if( arduino !== undefined ) connected = true;
+      if( arduino.board !== undefined ) connected = true;
 
       return {
         data: values,
         ports: configs.ports,
+        thePort: chosenPort,
         arduino: connected
       };
     } else if ( type === "last" ){

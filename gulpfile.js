@@ -13,5 +13,5 @@ gulp.task('server', () => {
 })
 
 gulp.task('default',['server'], () => {
-    gulp.watch(['./app.js','./theBigRouter.js'],['server'],);
+    gulp.watch(['./app.js','./theBigRouter.js'],['server']);
 })
