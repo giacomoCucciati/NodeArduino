@@ -32,11 +32,6 @@
         <button type="button" class="btn btn-default" v-on:click="closeArduino" :disabled="!connected">Close Arduino</button>
       </div>
       <div>
-        <button type="button" class="btn btn-default" v-on:click="readSingleTemp">Read Temperature</button>
-        <button type="button" class="btn btn-default" v-on:click="startTempReading">Start Cycle Temp</button>
-        <button type="button" class="btn btn-default" v-on:click="stopTempReading">Stop Cycle Temp</button>
-      </div>
-      <div>
         <select v-model="portselected">
             <option v-for="port in ports" v-bind:value="port">
                 {{ port }}
@@ -44,9 +39,16 @@
         </select>
       </div>
       <div>
+        <button type="button" class="btn btn-default" v-on:click="readSingleTemp">Read Temperature</button>
+      </div>
+      <div>
+        <input type="checkbox" id="contReading" v-model="contreading" v-on:click="toggleTempReading">
+        <label for="checkbox">Continuos Reading</label>
+      </div>
+      <div>
         <line-chart :width="600" :height="500" :chart-data="mydata" :options="options"></line-chart>
       </div>
-      <chrome-picker :value="colors" @input="updateValue"></chrome-picker>
+      <slider-picker :value="colors" @input="updateValue"></slider-picker>
     </div>
   </body>
   <script src="/frontend/control-gui-vue.js"></script>

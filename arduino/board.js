@@ -52,6 +52,10 @@ module.exports = function() {
     }
   };
 
+  var isConnected = function() {
+    return board !== undefined;
+  };
+
   var activatereading = function() {
     board.sysexCommand(Board.encode([0x12,0]));
   };
@@ -71,7 +75,7 @@ module.exports = function() {
   return {
     port,
     eventEmitter,
-    board,
+    isConnected: isConnected,
     changecolor: changecolor,
     connectserial: connectserial,
     closeserial: closeserial,

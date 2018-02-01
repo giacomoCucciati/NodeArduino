@@ -1,2 +1,5 @@
 node_modules/
 .DS_Store
+myOwnCA-crt.pem
+myOwnServer-crt.pem
+myOwnServer-key.pem

@@ -8,18 +8,17 @@ Vue.component("line-chart", {
   }
 });
 
-Vue.component("chrome-picker", {
-  extends: VueColor.Chrome,
+Vue.component("slider-picker", {
+  extends: VueColor.Slider,
 });
 
 var defaultProps = {
   rgba: {
-    r: 25,
-    g: 77,
-    b: 51,
+    r: 0,
+    g: 255,
+    b: 0,
     a: 1
   },
-  a: 1
 };
 
 var app = new Vue({
@@ -28,6 +27,7 @@ var app = new Vue({
   data: {
     message: 'Pippo!',
     colors: defaultProps,
+    contreading: false,
     socket: null,
     mydata: {},
     xyvector: [],
@@ -59,21 +59,19 @@ var app = new Vue({
       });
     },
 
-    startTempReading: (event) => {
-      $.getJSON('/gui/start-cycle-temp', payload => {
-        app.message = payload['message']
-      });
-    },
-    stopTempReading: (event) => {
-      $.getJSON('/gui/stop-cycle-temp', payload => {
+    toggleTempReading: (event) => {
+      console.log(app.contreading);
+      $.post('/gui/toggle-reading-temp', { reading: app.contreading },payload => {
         app.message = payload['message'];
       });
     },
+
     fetchData (type) {
       $.post('/gui/data',{ load: type }, payload => {
         this.fillData(type, payload);
       });
     },
+
     updateValue (value) {
       app.colors = value;
       $.post('/gui/changecolor',{  r: app.colors.rgba.r, g: app.colors.rgba.g, b: app.colors.rgba.b,}, payload => {
@@ -88,6 +86,7 @@ var app = new Vue({
           } else if (type === "all") {
             app.ports = payload['ports'];
             app.arduino = payload['arduino'];
+            app.contreading = payload['reading'];
             if(app.ports.indexOf(payload['thePort']) > 0) {
               app.portselected = payload['thePort'];
             }
@@ -112,9 +111,6 @@ var app = new Vue({
           this.options = {
           responsive: true,
           maintainAspectRatio: false,
-          animation: {
-            duration: 5
-          },
           title: {
             display: true,
             text: 'Temperatura'

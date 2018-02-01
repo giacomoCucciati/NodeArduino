@@ -36,11 +36,12 @@ module.exports = function(theSocket) {
   router.post('/close-arduino', (req, res) => {
     console.log('Requested closing connection with Arduino.');
     maincontrol.close();
-    res.send({message: "Closing connection with Arduino.",arduino: false}});
+    res.send({message: "Closing connection with Arduino.",arduino: false});
   });
 
   // Read serial port
   router.get('/read-single-temp', (req, res) => {
+    console.log('Requested single reading temperature.');
     maincontrol.readSingleTemp();
     res.send({message: 'Reading temperature.'});
   });
@@ -57,6 +58,21 @@ module.exports = function(theSocket) {
     console.log('Requested stop reading temperature.');
     maincontrol.stopTempCycle();
     res.send({message: "Stop reading temperature."});
+  });
+
+  // Read serial port
+  router.post('/toggle-reading-temp', (req, res) => {
+    console.log('Requested toggle reading temperature: ', req.body.reading);
+    // I radio button funzionano al contrario...
+    if(req.body.reading === "false"){
+      console.log('Start reading');
+      maincontrol.startTempCycle();
+      res.send({message: "Start reading temperature."});
+    } else {
+      console.log('Stop reading');
+      maincontrol.stopTempCycle();
+      res.send({message: "Stop reading temperature."});
+    }
   });
 
   // Get data

@@ -45,27 +45,27 @@ module.exports = function(theSocket) {
 
   var startTempCycle = function() {
     console.log("Activating cycle reading...");
-    this.mytimer = setInterval( function(){
+    mytimer = setInterval( function(){
       arduino.activatereading();
     }, configs.intervalReading*1000);
   };
 
   var stopTempCycle = function() {
     console.log("Stopping cycle reading...");
-    clearInterval(this.mytimer);
+    clearInterval(mytimer);
+    mytimer = undefined;
   };
 
   var getData = function(type) {
 
     if ( type === "all" ){
-      let connected = false;
-      if( arduino.board !== undefined ) connected = true;
-
       return {
+        message: "Updating arduino status.",
         data: values,
         ports: configs.ports,
         thePort: chosenPort,
-        arduino: connected
+        arduino: arduino.isConnected(),
+        reading: (mytimer !== undefined)
       };
     } else if ( type === "last" ){
       return {data: values[values.length-1]};
