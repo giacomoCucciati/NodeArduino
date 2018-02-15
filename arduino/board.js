@@ -11,6 +11,7 @@ module.exports = function() {
   var led_R = 11;
   var led_G = 10;
   var led_B = 9;
+  var lum = 0; // analog
 
   var connectserial = function(newPortString,newBaudRate) {
 
@@ -32,6 +33,7 @@ module.exports = function() {
               board.pinMode(led_R,board.MODES.PWM);
               board.pinMode(led_G,board.MODES.PWM);
               board.pinMode(led_B,board.MODES.PWM);
+              //board.pinMode(lum,board.MODES.OUTPUT);
               board.on("string", function(theString) {
                 elaborateString(theString);
               });
@@ -61,8 +63,16 @@ module.exports = function() {
   };
 
   var elaborateString = function(theString) {
-    let value = theString.substring(12);
-    eventEmitter.emit("new-serial-data", value);
+    console.log(theString);
+    let theReading = {};
+    let res = theString.split(" ");
+    for (order in res) {
+      let couple = res[order].split(":");
+      console.log(couple[0],couple[1]);
+      theReading[couple[0]]=couple[1];
+    }
+    //let value = theString.substring(12);
+    eventEmitter.emit("new-serial-data", theReading);
 
   }
 

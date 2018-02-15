@@ -25,12 +25,14 @@ var app = new Vue({
 
   el: '#controlGui',
   data: {
-    message: 'Pippo!',
+    message: 'Welcome!',
     colors: defaultProps,
     contreading: false,
     socket: null,
     mydata: {},
+    lummydata: {},
     xyvector: [],
+    lumxyvector: [],
     options: { responsive: false, maintainAspectRatios: false },
     portselected: '',
     ports: [],
@@ -80,9 +82,11 @@ var app = new Vue({
     },
 
     fillData (type, payload) {
-          let theValue = payload['data'];
+          let temperatureValue = payload['temperatureData'];
+          let luminosityValue = payload['luminosityData'];
           if(type === "last") {
-            this.xyvector.push({x: new Date(theValue.x), y: theValue.y});
+            this.xyvector.push({x: new Date(temperatureValue.x), y: temperatureValue.y});
+            this.lumxyvector.push({x: new Date(luminosityValue.x), y: luminosityValue.y});
           } else if (type === "all") {
             app.ports = payload['ports'];
             app.arduino = payload['arduino'];
@@ -90,12 +94,16 @@ var app = new Vue({
             if(app.ports.indexOf(payload['thePort']) > 0) {
               app.portselected = payload['thePort'];
             }
-            for (let el in theValue) {
-              let singleValue = theValue[el];
+            for (let el in temperatureValue) {
+              let singleValue = temperatureValue[el];
               this.xyvector.push({x: new Date(singleValue.x), y: singleValue.y});
             }
-
+            for (let el in luminosityValue) {
+              let singleValue = luminosityValue[el];
+              this.lumxyvector.push({x: new Date(singleValue.x), y: singleValue.y});
+            }
           }
+
           this.mydata = {
             labels: [],
             datasets: [
@@ -104,6 +112,18 @@ var app = new Vue({
                 backgroundColor: 'transparent',
                 pointBorderColor: 'orange',
                 data: this.xyvector
+              }
+            ]
+          }
+
+          this.lummydata = {
+            labels: [],
+            datasets: [
+              {
+                label: 'Luminosity (byte)',
+                backgroundColor: 'transparent',
+                pointBorderColor: 'green',
+                data: this.lumxyvector
               }
             ]
           }

@@ -3,7 +3,8 @@ const express = require('express')
 module.exports = function(theSocket) {
 
   var arduino = require('./arduino/board')();
-  var values = [];
+  var temperatureValues = [];
+  var luminosityValues = [];
   var mysocket = theSocket.of("/control");
   var mytimer = undefined;
   var configs = require('./configs')();
@@ -30,11 +31,18 @@ module.exports = function(theSocket) {
   };
 
   var elaborateData = function(theSerialData) {
-    //let singleValue = theSerialData.substring(7,theSerialData.length - 1);
     var d = new Date();
-    values.push({x: d.getTime(), y: parseFloat(theSerialData)});
-    if(values.length > configs.temp_length) values = values.slice(-configs.temp_length);
-    console.log("ElaborateData, last value: ", theSerialData);
+    for (var property in theSerialData) {
+      if (theSerialData.hasOwnProperty(property)) {
+          if(property === "Temperature") {
+            temperatureValues.push({x: d.getTime(), y: parseFloat(theSerialData[property])});
+            if(temperatureValues.length > configs.temp_length) temperatureValues = temperatureValues.slice(-configs.temp_length);
+          } else if(property === "Luminosity") {
+            luminosityValues.push({x: d.getTime(), y: parseFloat(theSerialData[property])});
+            if(luminosityValues.length > configs.temp_length) luminosityValues = luminosityValues.slice(-configs.temp_length);
+          }
+      }
+    }
     mysocket.emit("new-data");
   };
 
@@ -61,16 +69,23 @@ module.exports = function(theSocket) {
     if ( type === "all" ){
       return {
         message: "Updating arduino status.",
-        data: values,
+        temperatureData: temperatureValues,
+        luminosityData: luminosityValues,
         ports: configs.ports,
         thePort: chosenPort,
         arduino: arduino.isConnected(),
         reading: (mytimer !== undefined)
       };
     } else if ( type === "last" ){
-      return {data: values[values.length-1]};
+      return {
+        temperatureData: temperatureValues[temperatureValues.length-1],
+        luminosityData: luminosityValues[luminosityValues.length-1]
+      };
     }
-    return {data: values[values.length-1]};
+    return {
+      temperatureData: temperatureValues[temperatureValues.length-1],
+      luminosityData: luminosityValues[luminosityValues.length-1]
+    };
   };
 
   var changecolor = function(r,g,b) {
